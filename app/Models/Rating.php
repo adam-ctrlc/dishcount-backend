@@ -15,6 +15,10 @@ class Rating extends Model
         'rating'
     ];
 
+    protected $casts = [
+        'rating' => 'decimal:2'
+    ];
+
     public function user()
     {
         return $this->belongsTo(User::class, 'user_id', 'id');
