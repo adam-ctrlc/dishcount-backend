@@ -291,7 +291,7 @@ class ShopController extends Controller
         // Calculate average rating
         $avgRating = Rating::whereHas('product', function ($query) use ($shopId) {
             $query->where('shop_id', $shopId);
-        })->avg('rating') ?? 0;
+        })->selectRaw('AVG(CAST(rating AS DECIMAL)) as avg_rating')->value('avg_rating') ?? 0;
 
         // Debug information (can be removed in production)
         $debugInfo = [
