@@ -92,11 +92,12 @@ return [
     'charset' => 'utf8',
     'prefix' => '',
     'schema' => 'public',
-    'sslmode' => 'prefer',
-    'options' => extension_loaded('pdo_pgsql') ? [
-        PDO::ATTR_EMULATE_PREPARES => false,
+    'sslmode' => env('DB_SSLMODE', 'prefer'),
+    'options' => [
+        PDO::ATTR_EMULATE_PREPARES => true,
         PDO::ATTR_STRINGIFY_FETCHES => false,
-    ] : null,
+    ],
+    'application_name' => env('APP_NAME', 'Laravel'),
 ],
 
         'sqlsrv' => [
