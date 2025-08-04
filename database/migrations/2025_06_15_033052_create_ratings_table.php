@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignUuid('user_id')->constrained('users')->onDelete('cascade');
             $table->foreignId('product_id')->constrained('products')->onDelete('cascade');
-            $table->enum('rating', [1, 2, 3, 4, 5]);
+            $table->decimal('rating', 3, 2);
             $table->softDeletes();
             $table->timestamps();
         });
