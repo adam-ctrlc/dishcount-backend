@@ -119,7 +119,7 @@ class ProductsController extends Controller
             'product_name' => ['required', 'string', 'max:255'],
             'product_description' => ['required', 'string'],
             'price' => ['required', 'numeric', 'min:0'],
-            'image' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif', 'max:2048'],
+            'image' => ['nullable', 'string'],
             'stock' => ['required', 'integer', 'min:0'],
             'discount' => ['nullable', 'numeric', 'min:0', 'max:100'],
             'is_active' => ['nullable', 'boolean'],
@@ -134,18 +134,13 @@ class ProductsController extends Controller
 
         $validated = $validator->validated();
 
-        $imagePath = null;
-        if ($request->hasFile('image')) {
-            $imagePath = $request->file('image')->store('products', 'public');
-        }
-
         $product = Product::create([
             'shop_id' => $shopId,
             'category_id' => $validated['category_id'],
             'product_name' => $validated['product_name'],
             'product_description' => $validated['product_description'],
             'price' => $validated['price'],
-            'image' => $imagePath,
+            'image' => $validated['image'] ?? null,
             'stock' => $validated['stock'],
             'discount' => $validated['discount'] ?? 0,
             'is_active' => isset($validated['is_active']) ? (bool)$validated['is_active'] : true,
@@ -237,7 +232,7 @@ class ProductsController extends Controller
             'product_name' => ['required', 'string', 'max:255'],
             'product_description' => ['required', 'string'],
             'price' => ['required', 'numeric', 'min:0'],
-            'image' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif', 'max:2048'],
+            'image' => ['nullable', 'string'],
             'stock' => ['required', 'integer', 'min:0'],
             'discount' => ['nullable', 'numeric', 'min:0', 'max:100'],
             'is_active' => ['nullable', 'boolean'],
@@ -252,14 +247,6 @@ class ProductsController extends Controller
 
         $validated = $validator->validated();
 
-        // Handle image upload
-        if ($request->hasFile('image')) {
-            // Delete old image if exists
-            if ($product->image && Storage::disk('public')->exists($product->image)) {
-                Storage::disk('public')->delete($product->image);
-            }
-            $validated['image'] = $request->file('image')->store('products', 'public');
-        }
 
         // Handle is_active field properly
         if (isset($validated['is_active'])) {

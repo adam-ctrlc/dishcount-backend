@@ -35,7 +35,7 @@ return new class extends Migration
             $table->string('state')->nullable();
             $table->string('country')->nullable();
             $table->string('postal_code')->nullable();
-            $table->string('profile_picture')->nullable();
+            $table->longText('profile_picture')->nullable();
             $table->boolean('is_active')->default(true);
             $table->string('phone')->nullable();
             $table->timestamps();

@@ -30,25 +30,25 @@ class ProfileController extends Controller
       'username' => ['required', 'string', 'max:255', 'unique:users,username,' . $user->id],
       'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email,' . $user->id],
       'birth_date' => ['nullable', 'date'],
-      'address' => ['required', 'string', 'max:255'],
-      'city' => ['required', 'string', 'max:255'],
-      'state' => ['required', 'string', 'max:255'],
-      'country' => ['required', 'string', 'max:255'],
-      'postal_code' => ['required', 'numeric', 'digits_between:1,20'],
+      'address' => ['nullable', 'string', 'max:255'],
+      'city' => ['nullable', 'string', 'max:255'],
+      'state' => ['nullable', 'string', 'max:255'],
+      'country' => ['nullable', 'string', 'max:255'],
+      'postal_code' => ['nullable', 'numeric', 'digits_between:1,20'],
       'phone' => ['nullable', 'string', 'max:20'],
-      'profile_picture' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif', 'max:2048'],
+      'profile_picture' => ['nullable', 'string'], 
     ];
 
-    $data = Validator::make($request->all(), $rules)->validate();
-
-    // Handle profile picture upload
-    if ($request->hasFile('profile_picture')) {
-      // Delete old profile picture if exists
-      if ($user->profile_picture && Storage::disk('public')->exists($user->profile_picture)) {
-        Storage::disk('public')->delete($user->profile_picture);
-      }
-      $data['profile_picture'] = $request->file('profile_picture')->store('profile_pictures', 'public');
+    $validator = Validator::make($request->all(), $rules);
+    
+    if ($validator->fails()) {
+      return response()->json([
+        'message' => 'Validation failed',
+        'errors' => $validator->errors()
+      ], 422);
     }
+    
+    $data = $validator->validated();
 
     $user->update($data);
     return response()->json(['message' => 'Profile updated successfully', 'user' => $user], 200);
@@ -76,22 +76,15 @@ class ProfileController extends Controller
     /** @var User $user */
     $user = Auth::user();
     $rules = [
-      'profile_picture' => ['required', 'image', 'mimes:jpeg,png,jpg,gif', 'max:2048'],
+      'profile_picture' => ['required', 'string'],
     ];
     $data = Validator::make($request->all(), $rules)->validate();
 
-    // Delete old profile picture if exists
-    if ($user->profile_picture && Storage::disk('public')->exists($user->profile_picture)) {
-      Storage::disk('public')->delete($user->profile_picture);
-    }
-
-    $path = $request->file('profile_picture')->store('profile_pictures', 'public');
-    $user->profile_picture = $path;
+    $user->profile_picture = $data['profile_picture'];
     $user->save();
     return response()->json([
       'message' => 'Profile picture updated successfully',
-      'profile_picture' => $path,
-      'profile_picture_url' => Storage::url($path)
+      'profile_picture' => $data['profile_picture']
     ], 200);
   }
 }

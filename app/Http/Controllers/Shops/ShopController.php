@@ -129,7 +129,7 @@ class ShopController extends Controller
                 'shop' => $owner,
                 'access' => 'view-only'
             ], 403);
-        }
+        }   
 
         if ($userOwnShop) {
             return response()->json([

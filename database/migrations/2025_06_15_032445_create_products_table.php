@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('product_name');
             $table->text('product_description');
             $table->decimal('price', 10, 2);
-            $table->string('image')->nullable();
+            $table->longText('image')->nullable();
             $table->integer('stock')->default(0);
             $table->decimal('discount', 2, 1)->default(0.0);
             $table->boolean('is_active')->default(true);
