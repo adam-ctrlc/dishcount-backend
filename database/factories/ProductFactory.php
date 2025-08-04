@@ -8,27 +8,46 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 
 class ProductFactory extends Factory
 {
-  public function definition(): array
-  {
-    return [
-      'shop_id' => Shop::factory(),
-      'category_id' => Category::inRandomOrder()->first()->id ?? Category::factory(),
-      'product_name' => fake()->words(3, true),
-      'product_description' => fake()->paragraph(),
-      'price' => fake()->randomFloat(2, 10, 1000),
-      'image' => null,
-      'stock' => fake()->numberBetween(0, 100),
-      'discount' => fake()->randomFloat(1, 0, 9.9),
-      'is_active' => true,
-    ];
-  }
+    public function definition(): array
+    {
+        return [
+            'shop_id' => Shop::factory(),
+            'category_id' => Category::inRandomOrder()->first()->id ?? 1,
+            'product_name' => fake()->words(3, true),
+            'product_description' => fake()->paragraph(),
+            'price' => fake()->randomFloat(2, 10, 1000),
+            'image' => null,
+            'stock' => fake()->numberBetween(0, 100),
+            'discount' => fake()->randomFloat(1, 0, 9.9),
+            'is_active' => fake()->boolean(80), // 80% chance of being active
+            'is_featured' => fake()->boolean(20), // 20% chance of being featured
+        ];
+    }
 
-  public function forShop(Shop $shop)
-  {
-    return $this->state(function (array $attributes) use ($shop) {
-      return [
-        'shop_id' => $shop->id,
-      ];
-    });
-  }
+    public function forShop(Shop $shop)
+    {
+        return $this->state(function (array $attributes) use ($shop) {
+            return [
+                'shop_id' => $shop->id,
+            ];
+        });
+    }
+
+    public function featured()
+    {
+        return $this->state(function (array $attributes) {
+            return [
+                'is_featured' => true,
+            ];
+        });
+    }
+
+    public function active()
+    {
+        return $this->state(function (array $attributes) {
+            return [
+                'is_active' => true,
+            ];
+        });
+    }
 }
