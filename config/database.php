@@ -96,11 +96,6 @@ return [
     'options' => extension_loaded('pdo_pgsql') ? [] : null,
 ],
 
-
-
-
-
-
         'sqlsrv' => [
             'driver' => 'sqlsrv',
             'url' => env('DB_URL'),
