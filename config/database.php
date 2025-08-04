@@ -93,7 +93,10 @@ return [
     'prefix' => '',
     'schema' => 'public',
     'sslmode' => 'prefer',
-    'options' => extension_loaded('pdo_pgsql') ? [] : null,
+    'options' => extension_loaded('pdo_pgsql') ? [
+        PDO::ATTR_EMULATE_PREPARES => false,
+        PDO::ATTR_STRINGIFY_FETCHES => false,
+    ] : null,
 ],
 
         'sqlsrv' => [
